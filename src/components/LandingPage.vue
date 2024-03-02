@@ -2,10 +2,10 @@
   <div class="box">
     <div class="container">
       <img
-        src="https://themscale.com/wp-content/uploads/2023/05/ef12556d-4e7c-4d80-9241-dcf8aa1b720a-removebg-preview.png">
+        src="../assets/images/The_M_Scale_Mark_orange_rgb.svg">
     </div>
     <h1>{{ msg }}</h1>
-    <button type="button" @click="convertJSONtoCSV(data)" class="btn btn-danger mt-5">Download</button>
+    <button type="button" @click="convertJSONtoCSV(data)" class="btn mt-5" style="background-color: #f49600;font-weight:600">Download</button>
   </div>
 </template>
 
