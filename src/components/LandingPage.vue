@@ -5,7 +5,11 @@
         src="../assets/images/The_M_Scale_Mark_orange_rgb.svg">
     </div>
     <h1>{{ msg }}</h1>
-    <button type="button" @click="convertJSONtoCSV(data)" class="btn mt-5" style="background-color: #f49600;font-weight:600">Download</button>
+    <div style="display: flex;justify-content: space-evenly;">
+      <button type="button" @click="convertJSONtoCSV(data)" class="btn mt-5" style="background-color: #f49600;font-weight:600">Download Reviews</button>
+      <button type="button" @click="downloadVenues" class="btn mt-5" style="background-color: #313AB8;color:#fff;font-weight:600">Download Venues</button>
+    </div>
+      
   </div>
 </template>
 
@@ -23,7 +27,9 @@ export default {
 
   data() {
     return {
-      data: null
+      data: null,
+      venuesData: null,
+      apiKey: null
     };
   },
   async created() {
@@ -37,6 +43,8 @@ export default {
     onValue(venues, (snapshot) => {
       this.data = snapshot.val();
     });
+    // Assuming the API key is stored in your firebaseConfig
+    this.apiKey = firebaseConfig.apiKey;
   },
   methods: {
     formatDate: function (timestamp) {
@@ -86,10 +94,50 @@ export default {
 
       // Release the object URL after the download link is clicked
       URL.revokeObjectURL(url);
+    },
+    async fetchVenueDetails(placeId) {
+      const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${this.apiKey}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.result;
+    },
+    async downloadVenues() {
+      const transformedData = [];
+      const venueEntries = Object.entries(this.data);
+      
+      for (const [venue] of venueEntries) {
+        const placeId = venue.placeId;
+        const details = await this.fetchVenueDetails(placeId);
+        if (details) {
+          transformedData.push({
+            'Venue Name': details.name,
+            'Address': details.formatted_address
+          });
+        }
+      }
+
+      const worksheet = XLSX.utils.json_to_sheet(transformedData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Venues');
+
+      // Generate buffer with the workbook in XLSX format
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+      // Convert buffer to Blob
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      const url = URL.createObjectURL(blob);
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = 'venues.xlsx'; // Set the desired file name with .xlsx extension
+      downloadLink.click();
+
+      // Release the object URL after the download link is clicked
+      URL.revokeObjectURL(url);
     }
   }
 }
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
