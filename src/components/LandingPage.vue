@@ -4,10 +4,10 @@
       <img src="../assets/images/The_M_Scale_Mark_orange_rgb.svg">
     </div>
     <h1>{{ msg }}</h1>
-    <div style="display: flex;justify-content: space-evenly;max-width: 600px;margin: 0 auto;">
+    <!-- <div style="display: flex;justify-content: space-evenly;max-width: 600px;margin: 0 auto;"> -->
       <button type="button" @click="convertJSONtoCSV(data)" class="btn mt-5" style="background-color: #f49600;font-weight:600">Download Reviews</button>
-      <button type="button" @click="downloadVenues" class="btn mt-5" style="background-color: #313ab8;color:#fff;font-weight:600">Download Venues</button>
-    </div>
+      <!-- <button type="button" @click="downloadVenues" class="btn mt-5" style="background-color: #313ab8;color:#fff;font-weight:600">Download Venues</button> -->
+    <!-- </div> -->
   </div>
 </template>
 
