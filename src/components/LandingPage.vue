@@ -1,15 +1,13 @@
 <template>
   <div class="box">
     <div class="container">
-      <img
-        src="../assets/images/The_M_Scale_Mark_orange_rgb.svg">
+      <img src="../assets/images/The_M_Scale_Mark_orange_rgb.svg">
     </div>
     <h1>{{ msg }}</h1>
-    <div style="display: flex;justify-content: space-evenly;">
+    <div style="display: flex;justify-content: space-evenly;max-width: 600px;margin: 0 auto;">
       <button type="button" @click="convertJSONtoCSV(data)" class="btn mt-5" style="background-color: #f49600;font-weight:600">Download Reviews</button>
-      <button type="button" @click="downloadVenues" class="btn mt-5" style="background-color: #313AB8;color:#fff;font-weight:600">Download Venues</button>
+      <button type="button" @click="downloadVenues" class="btn mt-5" style="background-color: #313ab8;color:#fff;font-weight:600">Download Venues</button>
     </div>
-      
   </div>
 </template>
 
@@ -17,7 +15,6 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue } from "firebase/database";
 import * as XLSX from "xlsx" // Import the xlsx library
-
 
 export default {
   name: 'LandingPage',
@@ -28,8 +25,7 @@ export default {
   data() {
     return {
       data: null,
-      venuesData: null,
-      apiKey: null
+      venuesData: null
     };
   },
   async created() {
@@ -43,8 +39,6 @@ export default {
     onValue(venues, (snapshot) => {
       this.data = snapshot.val();
     });
-    // Assuming the API key is stored in your firebaseConfig
-    this.apiKey = firebaseConfig.apiKey;
   },
   methods: {
     formatDate: function (timestamp) {
@@ -96,7 +90,7 @@ export default {
       URL.revokeObjectURL(url);
     },
     async fetchVenueDetails(placeId) {
-      const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${this.apiKey}`;
+      const url = `/.netlify/functions/getVenueDetails?placeId=${placeId}`;
       const response = await fetch(url);
       const data = await response.json();
       return data.result;
